@@ -61,6 +61,10 @@ ggplot(data = fbi1, aes(x = State, fill=Type)) +
   geom_bar(aes(weight = Count), position = position_dodge()) + #total crimes in each state in the two years
   facet_wrap(~Year)
 
+ggplot(data = fbi1, aes(x = Type, fill = State)) +
+  geom_bar(aes(weight = Count / Population * 10 ^ 5), position = position_dodge()) +
+  ylab("count") +
+  facet_wrap(~Year) + coord_flip()
 
 
 
