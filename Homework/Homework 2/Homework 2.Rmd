@@ -1,0 +1,69 @@
+---
+title: 'Homework 2'
+author: "Polina Semenova"
+date: "2/2/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+#### Due: 2/9/2022 before 11:59pm. Submit in Canvas (file upload).
+
+1. Finish the in-class practice in Slides 3-12 in "Lecture 2-2-Practice for git", link: https://yumouqiu.github.io/DS202-Spring2022/Practice/practzice01.html  
+    a. Download the RMarkdown file with these homework instructions to use as a template for your work. Make sure to replace "Your Name" with your name.  
+    b. In the RMarkdown file, write down table of team members, and their github repository links;
+the number of successful pull requests you made, and the github repository to which you requested a change; the number of pull requests you accepted, and the github repository from which you accepted.  
+        - Name of Team Members: Michael Moore, Vaidehee Bahired
+        - Name of git repositories: https://github.com/mamoore1440/practice1-mamoore1440, and https://github.com/psemenova/practice1-vai, https://github.com/psemenova/practice1-your-kmykhaylova
+        - 3 pull requests made to practice1-mamoore1440, practice1-your-kmykhaylova, and practice1-vai, 3 pull requests accepted from practice1-mamoore1440, practice1-your-kmykhaylova, and practice1-vai
+    c. Write down a list with at least 3 tips of how to make working with git/github easier  
+        - having descriptive pull requests
+        - having small commits here and there instead of one big one at the end
+        - look over the pull requests before accepting them to make sure everything lines up
+
+2. Generate the graph of LifExp vs. gdpPercap for US, Canada (fixed data) and Australia by RMarkdown based on the data set "gapminder-5060", like what we did in the class.  
+Please use Github to collaborate on this problem. For example, one member can create the plot of US in his/her repository. The other member will fork this repository, add the result for the second country, and make a pull request for merging into the main repository. Each member should at least analyze one country and make at least one pull request. **Please submit the RMarkdown file, the output file, and the screen shot of the successful pull request and the merge.**
+
+```{r}
+life5060 <- read.csv("gapminder-5060.csv")
+```
+Canada
+```{r}
+canada <- life5060[(life5060$country == "Canada"),]
+canada <- canada %>% mutate(lifeExp = replace(lifeExp, year == 1957, 69.96))
+ggplot(data = canada, aes(x = lifeExp, y = gdpPercap)) +
+  geom_line()
+```
+
+United States
+```{r}
+data <- read.csv("gapminder-5060.csv")
+data<-data[(data$country=="United States"),]
+ggplot(data = data, aes(x = lifeExp, y = gdpPercap)) +
+  geom_point()
+```
+
+Australia
+```{r}
+data1 <- read.csv("gapminder-5060.csv")
+Australia <- data1[(data1$country=="Australia"),]
+ggplot(data = Australia, aes(x = lifeExp, y = gdpPercap)) +
+  geom_point()
+```  
+
+
+3. Write a paragraph (~200 words) describing an example of what you consider data science. Write your paragraph in R Markdown. Include at least 
+    a. one link to a chart or an image and 
+    b. at least one itemized or enumerated list.
+
+Data can be used to make decisions about certain topics, and data science can take that data and organize it, sort it and show it to easier convenience to the decider. Sorting data is important because when it is collected there may be a lot of values that are missing and data science makes sure to take that into consideration and sort them out so the charts turn out well. There are also may different types of charts like bar graphs, line graphs, scatter plots, and etc that all play a part in data visualization. Here is a link to a bar chart: https://46gyn61z4i0t1u1pnq2bbk2e-wpengine.netdna-ssl.com/wp-content/uploads/2018/09/income_xtchart-1024x660.png
+This bar chart helps viualize the income by gender, having it in a colorful chart, it is easier to see how males earn more than females. This conclusion would have been more difficult to understand if it was just numbers. Here is a link for an itemized list: https://i.pinimg.com/originals/0b/93/8f/0b938f117ca8a6a4c4cd733bf8fbc3f0.png this list shows us the cost for cleaning separated by areas and then go more indepth of each part of that room. This lets us see the small costs for everything and goes into more detail rather than just a total amount of money. 
+    
+
+Note: your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio. Including the link to the image is the tricky part here. Make sure that you don't use any file structure that depends on your computing environment.
+
+
+For the submission: submit your solution in an **R Markdown file** and (just for insurance) submit the corresponding html (or Word) file with it. 

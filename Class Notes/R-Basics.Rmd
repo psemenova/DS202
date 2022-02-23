@@ -1,0 +1,106 @@
+---
+title: "R-Basics"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Vectors:
+```{r}
+x = c(4, 1, 3, 9)
+y = c(1, 2, 3, 5)
+```
+
+Math: 
+```{r}
+x - y
+(x - y)^2
+sum((x-y)^2)
+sqrt(sum((x - y)^2))
+```
+
+Pipeline operator:
+```{r}
+library(tidyverse)
+
+(x - y)^2 %>% sum() %>% sqrt()
+```
+
+
+```{r} 
+x[-3]
+ #x = x[-3] #exclude the third element
+ x - y
+ x[c(1, 1, 1, 2, 2, 2, 3, 3, 3)]
+```
+
+Functions:
+FunctionName = function(arg1, arg2) {
+  ...
+  return(...)
+}
+arg1 & arg2 can be vectors or matrices  
+```{r}
+q = function(x,y) {
+  q = x^2 + y^2
+  return(q)
+}
+```
+
+Looping:
+```{r}
+a = c(1 : 10)
+b = c()
+for(i in 1: length(a)) {
+  b[i] = a[i]^2
+  b[i]
+}
+b
+```
+
+Extract from a vector/matrix:
+```{r}
+a = c(1, 3, 5, 7, 9)
+a[3]
+a[c(1,2)]
+A = matrix(c(1 : 9), 3 ,3)
+A
+```
+
+Your Turn:
+```{r}
+x = c(1 : 10)
+sample.var = function(x) {
+  # this is a function to calculate the sample variance of a vector
+  n = length(x)
+  res = sum((x - mean(x))^2) / (n - 1)
+  return(res)
+  # built in function
+  # var(x)
+}
+```
+
+```{r}
+x = c(1 : 20)
+sample.var(x)
+```
+
+```{r}
+A = cities[, c("City", "Population", "Violent.crime", 'Year')]
+A$Violent.crime.per.population = A$Violent.crime / A$Population * 10^5 # Creates a new column and names it
+A[, 6] = A$Violent.crime / A$Population * 10^5 #Creates a new column but doesn't name it
+View(A)
+```
+
+```{r}
+B = cities[, 3 : 12]
+View(B)
+mean(A$Violent.crime)
+colMeans(B)
+```
+
+
+
+

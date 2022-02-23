@@ -1,0 +1,64 @@
+---
+title: "intoduction"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+global set up
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+# R Markdown
+## R Markdown
+### R Markdown
+#### R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+life5060 <- read.csv("gapminder-5060.csv")
+head(life5060)
+life5060 <- life5060 %>% filter(country == "Canada")
+canada1 <- life5060[life5060$country == "Canada"]
+dim(canada1)
+head(life5060)
+canada1 %>%
+  ggplot(aes(x = year, y = lifeExp)) +
+  geom_line()
+```
+```{r}
+canada1 %>% filter(year == 1957)
+canada_fixed <- canada1 %>% mutate(lifeExp = replace(lifeExp, year == 1957, 69.96))
+canada_fixed %>%
+  ggplot(aes(x = year, y = lifeExp)) +
+  geom_line()
+```
+
+```{r}
+canada_fixed %>% 
+  ggplot(aes(x = year, y = lifeExp, group=country)) + geom_line() +
+  geom_line(data = life5060 %>%
+              filter(country %in% c("United States", "Mexico")))
+```
+
+

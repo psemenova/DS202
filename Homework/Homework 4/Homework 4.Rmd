@@ -1,0 +1,48 @@
+---
+title: "Homework 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(classdata)
+library(tidyverse)
+library(ggplot2)
+```
+
+Loading in the Data
+```{r}
+choco = read.csv("https://ds202-at-isu.github.io/labs/data/choco.csv")
+```
+
+## Question Set 1
+
+1. What is the overall number of chocolate bars rated? <br>
+**Answer: 1852 number of chocolate bars rated**
+```{r}
+str(choco)
+```
+2. How does the number of ratings depend on the year? Draw a bar chart of the number of reports <br>
+**Answer:  **
+```{r}
+choco %>% ggplot(aes(x = as.factor(Review.Date))) + 
+  geom_bar() +
+  ggtitle("") +
+  xlab("Year")
+```
+
+## Question Set 2
+
+1. How are ratings distributed? Draw a histogram of ratings and describe it. Don’t forget to mention outliers, if there are any. <br>
+**Answer:  **
+
+2. Do ratings depend on the cocoa percentage of a chocolate bar? <br>
+**Answer:  **
+
+3. How do ratings compare across different company locations? Focus on the three locations with the most ratings: <br>
+**Answer:  **
+
+## Your Own Question
+
+1.  <br>
+**Answer: **

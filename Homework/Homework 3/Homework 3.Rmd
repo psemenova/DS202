@@ -1,0 +1,86 @@
+---
+title: 'Homework #3'
+author: "Polina Semenova"
+date: "2/9/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+library(classdata)
+```
+
+## Cars and mileage
+#### Due: 2/16/2022 before 11:59pm. Submit in Canvas (file upload).
+
+In this homework we will use the `mpg` data set, you can access the data by loading the package `ggplot2` into your R session by executing the command 
+`library(ggplot2)`. The `mpg` data includes information about fuel economy of popular car models
+for the years 1999 and 2008 as collected by the US Environmental Protection Agency.
+
+```{r}
+head(mpg)
+```
+
+Most exercises are from the ggplot2 book section 2.2.1. You might find it helpful for working on the homework to read through this section.
+
+1. Download the RMarkdown file with these homework instructions to use as a template for your work.
+Make sure to replace "Your Name" in the YAML with your name.
+2.  List five functions that you could use to get more information about the
+mpg dataset.
+```{r}
+colnames(mpg) #Get the column names of the data frame
+unique(mpg[c("year")]) #Get the different years that are stored in the data set
+head(mpg) #To view the data set and see what the values are
+filter(mpg, year == 2008) #the filter function can be used to help sort data out to easier manipulation
+summary(mpg) #get inforation about the data set 
+str(mpg)
+```
+3. Using the `ggplot2` package create a scatterplot of `hwy` and `cty` and describe the relationship. Why are there so few points visible? Use a geom that helps reduce the amount of overplotting in the scatterplot. (Try ```?geom_jitter```)
+```{r}
+ggplot(data = mpg, aes(x = hwy, y = cty)) +
+  geom_jitter()
+# The relationship between the two columns shows that as one increases so does the other, they are strongly correlated. 
+```
+
+4. Apart from the US, most countries use fuel consumption (fuel consumed
+over fixed distance) rather than fuel economy (distance traveled with fixed
+amount of fuel). How could you convert `cty` and `hwy` into the European
+standard of liter/100 km? Introduce corresponding variables into the `mpg` data.
+```{r}
+mpg$cty.convert = 235.21 / mpg$cty
+mpg$hwy.convert = 235.21 / mpg$hwy
+# To convert from miles per gallon to liter/100km, divide 235.21 by the number of miles per gallon
+```
+
+5.  Are cars in 2008 more fuel efficient than cars in 1999? Expand on your answer in (3) for a visual approach to this question. Note: you are not asked to find numeric answers. Instead, interpret plots. 
+```{r}
+mpg2008 = filter(mpg, year == 2008)
+mpg1999 = filter(mpg, year == 1999)
+
+mpg2008 %>% ggplot(aes(x = cty, y = hwy)) +
+  geom_jitter() +
+  ggtitle("Fuel Efficiency of Cars in 2008")
+
+mpg1999 %>% ggplot(aes(x = cty, y = hwy)) +
+  geom_jitter() +
+  ggtitle("Fuel Efficiency of Cars in 1999")
+
+# The cars in 2008 are more fuel efficient in comparison to the cars in 1999. The scatterplots show more concentration o the lower part of the graph for the 1999 year while the 2008 plot shows more concentration higher up. Thus the 2008 cars are more fuel efficient. 
+```
+
+6. Use the `ggplot2` package to create  side-by-side boxplots of `cty` by `class`. Describe the relationship in 2-3 sentences. 
+Change the label for the y-axis to 'city miles per gallon' (see ```?ylab```).  
+```{r}
+ggplot(data = mpg, aes(x = class, y = cty)) +
+  geom_boxplot() +
+  ylab("City miles per gallon")
+# The relationship between the mileage and the type of car is shown in the box plot. The larger cars such as SUV, Pickup, and minivan show a lower miles per gallon in comparison to the smaller compact cars. The smaller cars seem to be more fuel efficient in comparison to the larger ones. The subcompact car also has a larger range of miles per gallon, there are a good amount of subcompact cars that have higher and lower miles per gallon. 
+```
+
+
+Note: your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio. 
+
+
+For the submission: submit your solution in an **R Markdown file** and (just for insurance) submit the **corresponding html (or Word)** file with it. 
