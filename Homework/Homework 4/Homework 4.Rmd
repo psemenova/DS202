@@ -3,11 +3,14 @@ title: "Homework 4"
 output: html_document
 ---
 
+Group Names: Polina Semenova, Michael Moore
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(classdata)
 library(tidyverse)
 library(ggplot2)
+library(plyr)
 ```
 
 Loading in the Data
@@ -23,7 +26,7 @@ choco = read.csv("https://ds202-at-isu.github.io/labs/data/choco.csv")
 str(choco)
 ```
 2. How does the number of ratings depend on the year? Draw a bar chart of the number of reports <br>
-**Answer:  **
+**Answer:  More got rated as the years went on until 2015 where it peaked. 2016 was lower and 2017 even lower. While the rise from 2006 to 2015 was not exactly linear it still looks like it has a big enough correlation to consider that there is an linera trend up until the peak. **
 ```{r}
 choco %>% ggplot(aes(x = as.factor(Review.Date))) + 
   geom_bar() +
@@ -33,16 +36,63 @@ choco %>% ggplot(aes(x = as.factor(Review.Date))) +
 
 ## Question Set 2
 
-1. How are ratings distributed? Draw a histogram of ratings and describe it. Don’t forget to mention outliers, if there are any. <br>
-**Answer:  **
+1. How are ratings distributed? Draw a histogram of ratings and describe it. Don’t forget to mention outlines, if there are any. <br>
+**Answer:  The ratings seem to follow a simple normal distribution centered at 3.25 and extends to 2.5 and 4. I do not think that any rating below 2.5 or above 4 could be considered part of this distribution. This claim is backed up by the fact that anything under or equal to 2 and any 5 value is considered to be an outlier. **
+```{r}
+choco %>% ggplot(aes(x = as.factor(Rating))) + 
+  geom_bar() +
+  ggtitle("") +
+  xlab("Year")
+
+boxplot.stats(choco$Rating)$out
+```
 
 2. Do ratings depend on the cocoa percentage of a chocolate bar? <br>
-**Answer:  **
+**Answer:  There is no correlation between rating and cocoa percentage. And as you can see the correlation value is -0.16.**
+```{r}
+choco %>% ggplot(aes(x = Cocoa.Pct, y = Rating)) + 
+  geom_point() 
+
+data1 <- choco[, c(5, 7)]
+round(cor(data1), 2)
+```
 
 3. How do ratings compare across different company locations? Focus on the three locations with the most ratings: <br>
-**Answer:  **
+**Answer:  As we can see, America makes the most chocolate with Canada and France far behind. However, as we can barely see, the average rating for Canada and France is higher than for America. These observations are backed up by the data show by the 6 lines below the plot. It shows America's amount being more than double Canada and France combined, but the avergae being worse than both.**
+```{r}
+choco1 <- dplyr::filter(choco, Company.Location %in% c("U.S.A.","France", "Canada"))
+choco2 <- dplyr::filter(choco, Company.Location %in% c("U.S.A."))
+choco3 <- dplyr::filter(choco, Company.Location %in% c("Canada"))
+choco4 <- dplyr::filter(choco, Company.Location %in% c("France"))
+
+ggplot(data = choco1, aes(x = Company.Location)) +
+  geom_bar(aes(weight = Rating), position = position_dodge()) +
+  facet_wrap(~Rating)
+
+str(choco2) # USA  - 787
+str(choco3) # Canada - 132
+str(choco4) # France - 158
+
+mean(choco2$Rating)
+mean(choco3$Rating)
+mean(choco4$Rating)
+
+```
+
 
 ## Your Own Question
 
-1.  <br>
-**Answer: **
+1.  Which country has the highest rated chocolate on average?
+<br>
+**Answer: From the chart we can clearly see that Chile has the highest rated chocolate on average. We can also see that Chile has the highest based on the 1 line of code. We can also see that the average rating is consistent across countries at ~3.**
+```{r}
+data2 <- ddply(choco, .(Company.Location), function(x) mean(x$Rating))
+names(data2)[2] <- 'AverageRating'
+
+data2 %>% ggplot(aes(x = Company.Location)) +
+  geom_bar(aes(weight = AverageRating)) +
+  coord_flip()
+
+data2[which.max(data2$AverageRating),]
+```
+
