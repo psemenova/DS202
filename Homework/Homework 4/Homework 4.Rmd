@@ -3,7 +3,7 @@ title: "Homework 4"
 output: html_document
 ---
 
-Group Names: Polina Semenova, Michael Moore
+Group Names: Polina Semenova, Michael Moore, Kateryna Mykhaylova
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -95,4 +95,8 @@ data2 %>% ggplot(aes(x = Company.Location)) +
 
 data2[which.max(data2$AverageRating),]
 ```
+## Summary of Workflow
+Worked together on the same computer at the library on this homework assignment. Took turns writing out the code on the same computer. 
+
+
 
