@@ -4,6 +4,8 @@ output: html_document
 ---
 
 Group Names: Polina Semenova, Michael Moore, Kateryna Mykhaylova
+<br>
+Git repo: https://github.com/psemenova/DS202 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
