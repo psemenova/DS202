@@ -70,7 +70,7 @@ fbi %>% arrange(desc(Year), Type, desc(Count)) %>%
 #have to select the data in the same order 
 
 #mutate - introduce a new variable into a data set or transform/upate an old variable
-fbi %>% mutate(Rate = Count/Population * 70000) %>% head()
+# fbi %>% mutate(Rate = Count/Population * 70000) %>% head()
 
 #summarize function - observations into a (set of ) one-number statistic(s)
 fbi %>% 
@@ -82,4 +82,29 @@ fbi %>% #summarize and group_by
   summarise(mean_rate = mean(Count/Population*70000, na.rm=TRUE), 
             sd_rate = sd(Count/Population*70000, na.rm = TRUE))
 
+#group_by and mutate
+fbi <- fbi %>% mutate(
+  Rate = Count/Population * 70000, Type = factor(Type), Year = factor(Year)
+)
 
+fbi1 = fbi %>% mutate(Type = reorder(Type, Rate, median, na.rm = TRUE))
+levels(fbi1$Type)
+fbi1 %>% ggplot(aes(x = Type, y = Rate)) +
+  geom_boxplot()
+
+
+fbi1 = fbi1 %>% group_by(Type) %>% mutate(
+  best = rank(Rate) # ranks from lowest rate to highest rate // (rank(-Rate)) <- highest to lowest
+)
+fbi %>% filter(best == 1) %>% select(Type, State, Year, Rate)
+
+
+# how many times the states apperared in the top for crime 
+fbi1 = fbi1 %>% group_by(Type, Year) %>% mutate(
+  best = rank(Rate) # ranks from lowest rate to highest rate
+)
+fbi2 = fbi1 %>% filter(best < 4) %>% select(Type, State, Year, Rate, best)
+fbi2 %>% ggplot(aes(x = State)) +
+  geom_bar() + 
+  facet_wrap(~Type, scales = 'free') +
+  coord_flip()
