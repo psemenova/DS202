@@ -5,7 +5,7 @@ date: "3/9/2022"
 output: html_document
 ---
 
-Team Members: Michael Moore <br>
+Team Members: Michael Moore, Kateryna Mykhaylova <br>
 Git Repo Link: https://github.com/psemenova/DS202 <br>
 
 ```{r setup, include=FALSE}
@@ -31,9 +31,25 @@ HAPPY <- readRDS("data/happy.rds")
 
 
 ## Part two (individual exploration)
-Investigate the relationship between happiness and two other variables in the data. Find a visualization that captures the relationship and write a paragraph to describe it. <br> <br>
+Investigate the relationship between happiness and two other variables in the data. Find a visualization that captures the relationship and write a paragraph to describe it. <br>
 
-Each member should study a different question (choose different variables to investigate). <br> <br>
+Each member should study a different question (choose different variables to investigate). <br>
 
-Upload your answers and the data set to the repository. Discuss and refine answers as a team.
+Upload your answers and the data set to the repository. Discuss and refine answers as a team. <br>
 
+**Polina Semenova**
+```{r}
+
+```
+
+
+**Michael Moore**
+```{r}
+
+```
+
+
+**Kateryna Mykhaylova**
+```{r}
+
+```
