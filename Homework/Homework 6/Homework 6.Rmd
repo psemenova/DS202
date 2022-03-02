@@ -16,18 +16,45 @@ library(ggplot2)
 ```
 
 ```{r}
-data(happy, package="productplots")
-head(happy)
-HAPPY <- readRDS("data/happy.rds")
+happy <- readRDS("data/happy.rds")
 ```
 
 ## Part one (cleaning)
+Answer each of the following questions using R code to get an answer. Write a separate code chunk for each variable, once all the data manipulation is done, show the values in a barchart or histogram and comment on the plot.<br> <br>
+
 
 1. Data cleaning: the values “IAP”, “DK” and “NA” all encode missing values. Replace all of these instances by the value NA. <br>
+```{r}
+happy[happy == "IAP"] <- NA
+happy[happy == "DK"] <- NA
+happy[happy == "NA"] <- NA
+#another way to do it -> happy = replace(happy, happy == "IAP", NA) {do for each one}
+```
 
 2. Check the type of the variable and cast into the right type (factor variable for categorical variables). For age, change “89 OR OLDER” to 89 and assume the variable should be numeric. <br>
+```{r}
+str(happy)
+happy$AGE[happy$AGE == "89 OR OLDER"] <- "89"
+happy$AGE = as.numeric(happy$AGE)
+```
 
 3. Bring all levels of factors into a sensible order. For marital you could e.g. order the levels according to average age. <br>
+```{r}
+happy$HAPPY = as.factor(happy$HAPPY) 
+happy$MARITAL = as.factor(happy$MARITAL)
+happy$HEALTH = as.factor(happy$HEALTH)
+happy$DEGREE = as.factor(happy$DEGREE)
+happy$SEX = as.factor(happy$SEX)
+happy$FINRELA = as.factor(happy$FINRELA)
+happy$PARTYID = as.factor(happy$PARTYID)
+
+happy = happy %>% mutate(DEGREE = factor(DEGREE, levels = c("LT HIGH SCHOOL","HIGH SCHOOL", "JUNIOR COLLEGE", "GRADUATE", 
+                                                            "BACHELOR"))) %>% 
+  mutate(FINRELA = factor(FINRELA, levels = c("FAR BELOW AVERAGE", "BELOW AVERAGE", "AVERAGE", "ABOVE AVERAGE", 
+                                              "FAR ABOVE AVERAGE"))) %>%
+  mutate(HEALTH= factor(HEALTH, levels = c("POOR", "FAIR", "EXCELLENT", "GOOD")))
+
+```
 
 
 ## Part two (individual exploration)
