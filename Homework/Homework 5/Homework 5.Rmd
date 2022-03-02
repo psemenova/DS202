@@ -4,16 +4,19 @@ author: "Polina Semenova"
 date: "2/23/2022"
 output: html_document
 ---
-Group Members: Michael Moore<br>
+Group Members: Michael Moore, Kateryna Mykhaylova<br>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(classdata)
+library(ggplot2)
 ```
 
 ## Tips at Restaurants
 #### Due: 3/2/2022 before 11:59pm. Submit in Canvas (file upload).
 
-In this homework we will use the `tips` data set. THis data set is part of the `reshape2` package. You can load the data set by executing the command:
+In this homework we will use the `tips` data set. This data set is part of the `reshape2` package. You can load the data set by executing the command:
 ```{r}
 data(tips, package="reshape2")
 ```
@@ -22,41 +25,57 @@ The information contained in the data is collected by one waiter, who recorded o
 1. Download the RMarkdown file with these homework instructions to use as a template for your work.
 Make sure to replace "Your Name" in the YAML with your name.
 2.  How many parties did the waiter serve? What type are the variables that he collected? Show your code. 
-<br> **Answer: **
+<br> **Answer: He served 224 parties. The variable types that he collected are: total_bill is a num, tip is a num, sex is a factor, smoker is a factor, day is a factor, time is a factor, and size is an int**
 ```{r}
-
+str(tips)
 ```
 
-3. Creat a new variable `size.factor` which tranlates the variable `size` to a factor. Should `size` be a factor or a numerical variable? Give your reasonings.
-<br> **Answer: **
+3. Create a new variable `size.factor` which translates the variable `size` to a factor. Should `size` be a factor or a numerical variable? Give your reasoning.
+<br> **Answer: Size should be a numerical variable, because it represents the size of the party and all the values are integers**
 ```{r}
-
+tips$size.factor = as.factor(tips$size)
+levels(tips$size.factor)
 ```
 
 4. How does the tipping amount (`tip`) depend on the overall bill (`total_bill`)? Use the `ggplot2` package to show a chart, describe the relationship in words. Describe at least two types of anomalies in the plot. What do they mean? 
 <br> **Answer: **
 ```{r}
-
+tips %>% ggplot(aes(x = tip, y = total_bill)) +
+  geom_point()
 ```
+
 5. Introduce a variable `tiprate` into the data set, that incorporates the rate of tips. What information is available for the best tipper, what for the worst? What is the average rate for tips?
-<br> **Answer: **
+<br> **Answer: The average rate for tips is 16.08%. The best tipper had a 71.03% tip, however, his total bill was only $7.25. The worst tipper had a 3.56% tip, he had a $32.83 bill.** <br>
 ```{r}
+tips$tiprate = (tips$tip / tips$total_bill) * 100
 
+tips[tips$tiprate == max(tips$tiprate),]
+
+tips[tips$tiprate == min(tips$tiprate),]
+
+mean(tips$tiprate)
 ```
+
 6. How does smoking behavior and gender of the person who pays impact the  relationship between tip and total bill? Find a visualization that incorporates all four variables. Interpret the result.
-<br> **Answer: **
+<br> **Answer: ** <br>
 ```{r}
-
+tips %>% ggplot(aes(x = sex)) +
+  facet_wrap(~smoker) + 
+  geom_bar()
 ```
+
 7. Use ggplot2 to find a graphical summary of the relationship between day of the week and gender of the person paying the bill. What can you say about this relationship?
-<br> **Answer: **
+<br> **Answer: On the weekends males pay significantly more than females, but on weekdays females and males pay around the same.** <br>
 ```{r}
-
+tips %>% ggplot(aes(x = day, fill = sex)) +
+  geom_bar(position = position_dodge())
 ```
-8. Use ggplot2 to make a boxplot of the `tiprate` on different days. Rank the levels of `day` by the average of the `tiprate`. What can you say about this relationship?
-<br> **Answer: **
-```{r}
 
+8. Use ggplot2 to make a boxplot of the `tiprate` on different days. Rank the levels of `day` by the average of the `tiprate`. What can you say about this relationship?
+<br> **Answer: ** <br>
+```{r}
+#tips %>% ggplot() +
+# geom_boxplot()
 ```
 
 Note: your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio. 
