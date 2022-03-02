@@ -172,30 +172,51 @@ pre code {
 
 
 <p>Team Members: Michael Moore, Kateryna Mykhaylova <br> Git Repo Link: <a href="https://github.com/psemenova/DS202" class="uri">https://github.com/psemenova/DS202</a> <br></p>
-<pre class="r"><code>data(happy, package=&quot;productplots&quot;)
-head(happy)</code></pre>
-<pre><code>##   id         happy year age    sex       marital         degree       finrela
-## 1  1 not too happy 1972  23 female never married       bachelor       average
-## 2  2 not too happy 1972  70   male       married lt high school above average
-## 3  3  pretty happy 1972  48 female       married    high school       average
-## 4  4 not too happy 1972  27 female       married       bachelor       average
-## 5  5  pretty happy 1972  61 female       married    high school above average
-## 6  6  pretty happy 1972  26   male never married    high school above average
-##      health wtssall
-## 1      good  0.4446
-## 2      fair  0.8893
-## 3 excellent  0.8893
-## 4      good  0.8893
-## 5      good  0.8893
-## 6      good  0.4446</code></pre>
-<pre class="r"><code>HAPPY &lt;- readRDS(&quot;data/happy.rds&quot;)</code></pre>
+<pre class="r"><code>happy &lt;- readRDS(&quot;data/happy.rds&quot;)</code></pre>
 <div id="part-one-cleaning" class="section level2">
 <h2>Part one (cleaning)</h2>
+<p>Answer each of the following questions using R code to get an answer. Write a separate code chunk for each variable, once all the data manipulation is done, show the values in a barchart or histogram and comment on the plot.<br> <br></p>
 <ol style="list-style-type: decimal">
-<li><p>Data cleaning: the values “IAP”, “DK” and “NA” all encode missing values. Replace all of these instances by the value NA. <br></p></li>
-<li><p>Check the type of the variable and cast into the right type (factor variable for categorical variables). For age, change “89 OR OLDER” to 89 and assume the variable should be numeric. <br></p></li>
-<li><p>Bring all levels of factors into a sensible order. For marital you could e.g. order the levels according to average age. <br></p></li>
+<li>Data cleaning: the values “IAP”, “DK” and “NA” all encode missing values. Replace all of these instances by the value NA. <br></li>
 </ol>
+<pre class="r"><code>happy[happy == &quot;IAP&quot;] &lt;- NA
+happy[happy == &quot;DK&quot;] &lt;- NA
+happy[happy == &quot;NA&quot;] &lt;- NA
+#another way to do it -&gt; happy = replace(happy, happy == &quot;IAP&quot;, NA) {do for each one}</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Check the type of the variable and cast into the right type (factor variable for categorical variables). For age, change “89 OR OLDER” to 89 and assume the variable should be numeric. <br></li>
+</ol>
+<pre class="r"><code>str(happy)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    62466 obs. of  11 variables:
+##  $ HAPPY   : chr  &quot;NOT TOO HAPPY&quot; &quot;NOT TOO HAPPY&quot; &quot;PRETTY HAPPY&quot; &quot;NOT TOO HAPPY&quot; ...
+##  $ YEAR    : int  1972 1972 1972 1972 1972 1972 1972 1972 1972 1972 ...
+##  $ AGE     : chr  &quot;23&quot; &quot;70&quot; &quot;48&quot; &quot;27&quot; ...
+##  $ SEX     : chr  &quot;FEMALE&quot; &quot;MALE&quot; &quot;FEMALE&quot; &quot;FEMALE&quot; ...
+##  $ MARITAL : chr  &quot;NEVER MARRIED&quot; &quot;MARRIED&quot; &quot;MARRIED&quot; &quot;MARRIED&quot; ...
+##  $ DEGREE  : chr  &quot;BACHELOR&quot; &quot;LT HIGH SCHOOL&quot; &quot;HIGH SCHOOL&quot; &quot;BACHELOR&quot; ...
+##  $ FINRELA : chr  &quot;AVERAGE&quot; &quot;ABOVE AVERAGE&quot; &quot;AVERAGE&quot; &quot;AVERAGE&quot; ...
+##  $ HEALTH  : chr  &quot;GOOD&quot; &quot;FAIR&quot; &quot;EXCELLENT&quot; &quot;GOOD&quot; ...
+##  $ WTSSALL : num  0.445 0.889 0.889 0.889 0.889 ...
+##  $ PARTYID : chr  &quot;IND,NEAR DEM&quot; &quot;NOT STR DEMOCRAT&quot; &quot;INDEPENDENT&quot; &quot;NOT STR DEMOCRAT&quot; ...
+##  $ POLVIEWS: chr  NA NA NA NA ...</code></pre>
+<pre class="r"><code>happy$AGE[happy$AGE == &quot;89 OR OLDER&quot;] &lt;- &quot;89&quot;
+happy$AGE = as.numeric(happy$AGE)</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Bring all levels of factors into a sensible order. For marital you could e.g. order the levels according to average age. <br></li>
+</ol>
+<pre class="r"><code>happy$HAPPY = as.factor(happy$HAPPY) 
+happy$MARITAL = as.factor(happy$MARITAL)
+happy$HEALTH = as.factor(happy$HEALTH)
+happy$DEGREE = as.factor(happy$DEGREE)
+happy$SEX = as.factor(happy$SEX)
+happy$FINRELA = as.factor(happy$FINRELA)
+happy$PARTYID = as.factor(happy$PARTYID)
+
+happy = happy %&gt;% mutate(DEGREE = factor(DEGREE, levels = c(&quot;LT HIGH SCHOOL&quot;,&quot;HIGH SCHOOL&quot;, &quot;JUNIOR COLLEGE&quot;, &quot;GRADUATE&quot;, 
+                                                            &quot;BACHELOR&quot;))) %&gt;% 
+  mutate(FINRELA = factor(FINRELA, levels = c(&quot;FAR BELOW AVERAGE&quot;, &quot;BELOW AVERAGE&quot;, &quot;AVERAGE&quot;, &quot;ABOVE AVERAGE&quot;, 
+                                              &quot;FAR ABOVE AVERAGE&quot;))) %&gt;%
+  mutate(HEALTH= factor(HEALTH, levels = c(&quot;POOR&quot;, &quot;FAIR&quot;, &quot;EXCELLENT&quot;, &quot;GOOD&quot;)))</code></pre>
 </div>
 <div id="part-two-individual-exploration" class="section level2">
 <h2>Part two (individual exploration)</h2>
