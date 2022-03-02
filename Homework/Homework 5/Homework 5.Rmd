@@ -4,13 +4,14 @@ author: "Polina Semenova"
 date: "2/23/2022"
 output: html_document
 ---
-Group Members: Michael Moore, Kateryna Mykhaylova<br>
+Group Members: Polina Semenova, Michael Moore, Kateryna Mykhaylova<br>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(classdata)
 library(ggplot2)
+library(plyr)
 ```
 
 ## Tips at Restaurants
@@ -38,7 +39,7 @@ levels(tips$size.factor)
 ```
 
 4. How does the tipping amount (`tip`) depend on the overall bill (`total_bill`)? Use the `ggplot2` package to show a chart, describe the relationship in words. Describe at least two types of anomalies in the plot. What do they mean? 
-<br> **Answer: **
+<br> **Answer: As you can see from the scatter plot below we can see that there seems to be positive linear correlation between the two variables. We can see that at lower bills we have lower tips and vice verca. We can also see that there are some anomalies in the plot and data. For example there is a dot at ~$7 bill and ~$5 tip which would be a ~70% tip. We can see anomalies on the other ends to. For example on a ~$34 bill there was a ~$1.2 tip which would be a ~3.5%. These anomalies reflect nothing about the data, but everything about the person.**
 ```{r}
 tips %>% ggplot(aes(x = tip, y = total_bill)) +
   geom_point()
@@ -57,11 +58,13 @@ mean(tips$tiprate)
 ```
 
 6. How does smoking behavior and gender of the person who pays impact the  relationship between tip and total bill? Find a visualization that incorporates all four variables. Interpret the result.
-<br> **Answer: ** <br>
+<br> **Answer: Based on the scatterplot we can see that smokers tip less and that it would seem males will tip more than females. This is a very loose correlation that is visible. More analysis of the data would be necesarry to say this for certian.** <br>
 ```{r}
-tips %>% ggplot(aes(x = sex)) +
-  facet_wrap(~smoker) + 
-  geom_bar()
+
+tips1 <- tips %>% group_by(sex, smoker) %>% mutate(groups = paste(sex,smoker,sep=" "))
+
+tips1 %>% ggplot(aes(x = tip, y = total_bill, color = groups)) +
+  geom_point()
 ```
 
 7. Use ggplot2 to find a graphical summary of the relationship between day of the week and gender of the person paying the bill. What can you say about this relationship?
@@ -72,10 +75,15 @@ tips %>% ggplot(aes(x = day, fill = sex)) +
 ```
 
 8. Use ggplot2 to make a boxplot of the `tiprate` on different days. Rank the levels of `day` by the average of the `tiprate`. What can you say about this relationship?
-<br> **Answer: ** <br>
+<br> **Answer: As we can see the tiprate is essentially the same for everyday. Ironically Saturday is lowest tip rate day when it would intuitively seem like the most.** <br>
 ```{r}
-#tips %>% ggplot() +
-# geom_boxplot()
+tips2 <- ddply(tips, .(day), function(x) mean(x$tiprate))
+names(tips2)[2] <- 'AverageRating'
+
+
+tips2 %>% ggplot(aes(x = day)) +
+ geom_bar(aes(weight = AverageRating)) +
+  ylab("TipRate")
 ```
 
 Note: your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio. 
