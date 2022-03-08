@@ -102,7 +102,7 @@ Each member should study a different question (choose different variables to inv
 Upload your answers and the data set to the repository. Discuss and refine answers as a team. <br>
 
 #### Polina Semenova
-Health and Sex 
+Health and Sex <br>
 **Answer: The people with the excellent health are the happiest. As well as the males are a little more happy than females in the excellent and good categories. The better the health the more happy people are. **
 ```{r}
 happy.health.age = happy %>%
@@ -117,7 +117,7 @@ happy.health.age %>%  ggplot(aes(x = health, fill = sex)) +
 
 
 #### Michael Moore
-partyid and degree
+partyid and degree <br>
 **Answer: Based on the bar chart below, we can make a couple of assumptions based on the data. Firstly we can see that partyid is a strong indicator of happiness. We can see that the strong republicans are the happiest and that the farther left your partyid is the less happy your are. However we can see a unique trend in the data: near dems are the least happy. On top of this if you go left more after near dem it indicates you will be happier. On top of this distinctive trend we can see the an individuals happiness is also strongly indicated by their education. People with graduate level education are happier on average than people with less education. Overall, There is a lot of interesting information we can glean from the chart.**
 ```{r}
 happy.degree.age = happy %>%
@@ -133,7 +133,14 @@ happy.degree.age %>%  ggplot(aes(x = partyid, fill = degree)) +
 
 
 #### Kateryna Mykhaylova
-**Answer: **
+Age and Marital status <br>
+**Answer: This bar graph shows the relationship between the marital status and the happiness level during different ages. We can tell that generally, people are happier married when they are older than younger, and also generally happier widowed younger than older. We can see that the separated trend is around the same for all ages, while it also looks like poeple are also generally happier divorced or never married older.**
 ```{r}
-
+happy.health.age = happy %>%
+  group_by(age, marital) %>%
+  summarise(m.happy = mean(as.numeric(happy), na.rm  = TRUE)) %>%
+  arrange(m.happy)
+happy.health.age %>%  ggplot(aes(x = age, fill = marital)) + 
+  geom_bar(aes(weight = m.happy), position = position_dodge2()) +
+  labs(title = "", y = "Happiness", x = "Marital Status")
 ```
