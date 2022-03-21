@@ -1,0 +1,86 @@
+---
+title: 'Homework #7'
+author: "Polina Semenova"
+date: "3/9/2022"
+output: html_document
+---
+Group Members: Michael Moore, Kateryna Mykhaylova
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(classdata)
+library(data.table)
+```
+
+## Chick weights
+#### Due: 3/21/2022 before 11:59pm. Submit in Canvas (file upload).
+
+The `ChickWeight` data set is part of the base package `datasets`. See `?ChickWeight` for details on the data.
+For all of the questions use `dplyr` functions whenever possible.
+```{r}
+data(ChickWeight, package="datasets")
+```
+
+
+1. Download the RMarkdown file with these homework instructions to use as a template for your work.
+Make sure to replace "Your Name" in the YAML with your name.
+2. Get a frequency breakdown of the number of chicks, their average weight and the standard deviation of the weights in each of the diets at the start of the study.  <br>
+**Answer: There are 578 chick observations. The average weight is 121.82. For the first diet the standard deviation for the weight of the chicks is 0.994. For the second it is 1.49. For the third 1.03. And for the fourth it is 1.05.**
+```{r}
+str(ChickWeight)
+mean(ChickWeight$weight)
+chick.diet1 <- ChickWeight %>% filter(Diet == 1 & Time == 0)
+chick.diet2 <- ChickWeight %>% filter(Diet == 2 & Time == 0)
+chick.diet3 <- ChickWeight %>% filter(Diet == 3 & Time == 0)
+chick.diet4 <- ChickWeight %>% filter(Diet == 4 & Time == 0)
+sd(chick.diet1$weight, na.rm = FALSE)
+sd(chick.diet2$weight, na.rm = FALSE)
+sd(chick.diet3$weight, na.rm = FALSE)
+sd(chick.diet4$weight, na.rm = FALSE)
+```
+
+3. construct a ggplot that shows average weights by diet with an interval (shown as a line) of +- the standard deviation around the averages.  <br>
+```{r}
+chick.diet = ChickWeight %>% group_by(Diet) %>% summarise(
+  avgWeight = mean(weight),
+  sdP = sd(weight) + mean(weight),
+  sdM = mean(weight) - sd(weight)
+) 
+chick.diet %>% mutate(Diet = as.numeric(as.character(Diet))) %>%
+  ggplot(aes(x = Diet)) +
+  geom_point(aes(y = avgWeight)) +
+  geom_point(shape=3, aes(y=sdP)) + 
+  geom_point(shape=8, aes(y=sdM)) +
+  geom_line(aes(x=Diet, y=avgWeight)) + 
+  geom_line(linetype = 2, aes(x=Diet, y=sdP)) + 
+  geom_line(linetype = 3, aes(x=Diet, y=sdM)) 
+```
+4. Each chick should have twelve weight measurements. Use the dplyr package to identify how many chicks have a complete set of weight measurements and how many measurements there are in the incomplete cases. Extract a subset of the data for all chicks with complete information and name the data set `complete`. (Hint: you might want to use mutate to introduce a helper variable consisting of the number of observations)<br>
+**Answer: There are 45 chicks with complete weight counts and there are 5 chicks with incomplete weight counts.**
+```{r}
+weighing = ChickWeight %>% group_by(Chick) %>% summarise(n = n()) %>% arrange(desc(n))
+sum(weighing$n == 12)
+sum(weighing$n != 12)
+weighing = weighing %>% filter(n == 12)
+complete = ChickWeight[(ChickWeight$Chick %in% weighing$Chick), ]
+```
+5. In the complete data set introduce a new variable that measures the current weight difference compared to day 0. Name this variable  `weightgain`.<br>
+```{r}
+setDT(complete)[, weightgain := weight - weight[which.min(Time)] , by = Chick][]
+```
+6. Use ggplot2 to create side-by-side boxplots of `weightgain` by `Diet` for day 21. Describe the relationship in 2-3 sentences. Change the order of the categories in the Diet variable such that the boxplots are ordered by median `weightgain`.<br>
+**Answer: For worst diet to best diet in regards to weight gain for the chick (on a median basis) it is 1, 2, 4, 3. Diet 2 and 3 has the biggest range. While diet 1 and 4 have the least range. **
+```{r}
+complete.day21 = complete %>% filter(Time == 21)
+complete.day21$Diet <- with(complete.day21, reorder(Diet, weightgain, median))
+complete.day21 %>% ggplot(aes(x = Diet, y = weightgain)) +
+  geom_boxplot()
+```
+
+
+Note: your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio. 
+
+
+For the submission: submit your solution in an R Markdown file and (just for insurance) submit the corresponding html (or Word) file with it. 
