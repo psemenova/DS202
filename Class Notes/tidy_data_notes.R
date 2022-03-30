@@ -37,4 +37,6 @@ movies <- box %>% group_by(Movie, Distributor) %>%
     theater = Thtrs.[which.min(Week)],
     total.gross = max(Total.Gross, na.rm=TRUE)) %>% arrange(desc(total.gross))
 
-# 
+# Messy 
+
+
