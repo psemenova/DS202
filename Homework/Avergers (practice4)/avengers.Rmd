@@ -1,0 +1,51 @@
+---
+title: "Avengers Data"
+author: "Polina Semenova"
+date: "3/30/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+```
+
+Group Members: Michael Moore, Kateryna Mykhaylova<br>
+Git Repo: [link](https://github.com/psemenova/DS202/tree/main/Homework/Avergers%20(practice4))
+
+## Reading the data
+```{r}
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+```
+
+
+## Part One: Data tidying
+The avenger data consists of ten columns for each avenger called Death[1-5] to Return[1-5]<br>
+
+Get the data into a format where the five columns for Death[1-5] are replaced by two columns: Time, and Death. Time should be a number between 1 and 5 (look into the function `parse_number`); Death is a categorical variables with values "yes", "no" and "". Call the result `deaths`. <br>
+
+Similarly, deal with the returns of characters.<br>
+
+```{r}
+av %>% mutate(Time = )
+```
+
+
+## Part two: Validation
+Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
+
+**Polina Semenova**
+```{r}
+
+```
+
+**Michael Moore**
+```{r}
+
+```
+
+**Kateryna Mykhaylova**
+```{r}
+
+```
