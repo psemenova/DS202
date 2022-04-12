@@ -69,3 +69,49 @@ nasa %>% filter(x == 1, y %in% c(1, 10)) %>%
   ggplot(aes(x = time, y = temperature, group=id, color = id)) + geom_line()
 
 
+
+data(box, package="classdata")
+box %>% filter(Movie == "The Avengers: Age of Ultron") %>%
+  ggplot(aes(x = Date, y = Total.Gross)) + geom_line()
+
+
+box.summary = box %>% group_by(Movie, Distributor) %>% 
+  summarise(
+    max.date = max(Date),
+    max.week = max(Week),
+    Max.Thtrs = max(Thtrs.),
+    max.total.gross = max(Total.Gross, na.rm = TRUE),
+    first.week.gross = min(Total.Gross, na.rm = TRUE) # problem, min and max are the same if we say Total.Gross = max(Total.Gross)
+  )
+
+hist(box.summary$max.week)
+
+box.summary.clean1 = box.summary %>% filter(max.week < 50)
+box.summary.clean1 = box.summary.clean1 %>% arrange(desc(max.total.gross))
+
+box.summary 
+
+box %>% filter(Thtrs. > 100) %>%
+  ggplot(aes(x = Date, y = log(Total.Gross), 
+             group = interaction(Movie, Distributor))) + geom_line()
+
+
+box_summary <- box %>% group_by(Movie, Distributor) %>%
+  summarize(
+    Date = max(Date),
+    Week = max(Week),
+    Max.Gross = max(Total.Gross, na.rm=TRUE),
+    First.Gross = min(Total.Gross, na.rm=TRUE)
+  )
+
+box %>% filter(Thtrs. > 100) %>%
+  ggplot(aes(x = Date, y = Total.Gross, 
+             group = interaction(Movie, Distributor))) + geom_line() +
+  geom_text(aes(x = Date, y = Max.Gross, label = Movie), 
+            data = box_summary %>% filter(Max.Gross > 2.5e8))
+
+box %>% filter(Thtrs. > 100) %>%
+  ggplot(aes(x = Date, y = Total.Gross, 
+             group = interaction(Movie, Distributor))) + geom_line() +
+  ggrepel::geom_text_repel(aes(x = Date, y = Max.Gross, label = Movie), 
+                           data = box_summary %>% filter(Max.Gross > 2.5e8), colour="grey50")

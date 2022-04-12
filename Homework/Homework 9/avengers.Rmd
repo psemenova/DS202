@@ -12,7 +12,7 @@ library(dplyr)
 ```
 
 Group Members: Michael Moore, Kateryna Mykhaylova<br>
-Git Repo: [link](https://github.com/psemenova/DS202/tree/main/Homework/Avergers%20(practice4))
+Git Repo: [link](https://github.com/psemenova/DS202/tree/main/Homework/Homework%209)
 
 ## Reading the data
 ```{r}
