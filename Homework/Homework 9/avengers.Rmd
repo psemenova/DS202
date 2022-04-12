@@ -48,17 +48,26 @@ av.neat = left_join(av1, av2, by = c("Name.Alias", "time"))
 ## Part two: Validation
 Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
 
-**Polina Semenova**
+### Polina Semenova
+**Statement:** Iron Man, Hulk, Captain America, Thor, Hawkeye, Black Widow, Scarlet Witch, Quicksilver and The Vision — every single one of them has died at least once in the course of their time Avenging in the comics. <br>
+**Answer:** The table below shows all nine avengers show up at once. 
 ```{r}
-
+avengers = av.neat %>% filter(Name.Alias %in% c("Anthony Edward \"Tony\" Stark", "Steven Rogers", "Clinton Francis Barton", "Thor Odinson", "Natalia Alianovna Romanova", "Wanda Maximoff", "Pietro Maximoff", "Victor Shade (alias)", "Robert Bruce Banner") & death == "YES")
+head(avengers, 9)
 ```
 
-**Michael Moore**
+### Michael Moore
+**Statement:** In fact, Hawkeye died twice! <br>
+**Answer:** This is proven true. There are only two rows in the data where Hawkeye (Clinton Francis Barton) died.
 ```{r}
-
+hawkeye = av.neat %>% dplyr::filter(Name.Alias == "Clinton Francis Barton" & death == "YES")
+nrow(hawkeye)
 ```
 
-**Kateryna Mykhaylova**
+### Kateryna Mykhaylova
+**Statement:** and on 57 occasions the individual made a comeback.<br>
+**Answer:** This statement was wrong. As the data shows below, there were only 55 occasions in which the individuals made a comeback. 
 ```{r}
-
+back = av.neat %>% filter(return == "YES") %>% summarise(n = n())
+head(back)
 ```

@@ -209,9 +209,37 @@ av.neat = left_join(av1, av2, by = c(&quot;Name.Alias&quot;, &quot;time&quot;))<
 <div id="part-two-validation" class="section level2">
 <h2>Part two: Validation</h2>
 <p>Each team member picks one of the statements in the FiveThirtyEight <a href="https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/">analysis</a> and fact checks it based on the data. Use dplyr functionality whenever possible.</p>
-<p><strong>Polina Semenova</strong></p>
-<p><strong>Michael Moore</strong></p>
-<p><strong>Kateryna Mykhaylova</strong></p>
+<div id="polina-semenova" class="section level3">
+<h3>Polina Semenova</h3>
+<p><strong>Statement:</strong> Iron Man, Hulk, Captain America, Thor, Hawkeye, Black Widow, Scarlet Witch, Quicksilver and The Vision — every single one of them has died at least once in the course of their time Avenging in the comics. <br> <strong>Answer:</strong> The table below shows all nine avengers show up at once.</p>
+<pre class="r"><code>avengers = av.neat %&gt;% filter(Name.Alias %in% c(&quot;Anthony Edward \&quot;Tony\&quot; Stark&quot;, &quot;Steven Rogers&quot;, &quot;Clinton Francis Barton&quot;, &quot;Thor Odinson&quot;, &quot;Natalia Alianovna Romanova&quot;, &quot;Wanda Maximoff&quot;, &quot;Pietro Maximoff&quot;, &quot;Victor Shade (alias)&quot;, &quot;Robert Bruce Banner&quot;) &amp; death == &quot;YES&quot;)
+head(avengers, 9)</code></pre>
+<pre><code>##                    Name.Alias time death return
+## 1 Anthony Edward &quot;Tony&quot; Stark    1   YES    YES
+## 2         Robert Bruce Banner    1   YES    YES
+## 3                Thor Odinson    1   YES    YES
+## 4               Steven Rogers    1   YES    YES
+## 5      Clinton Francis Barton    1   YES    YES
+## 6             Pietro Maximoff    1   YES    YES
+## 7              Wanda Maximoff    1   YES    YES
+## 8        Victor Shade (alias)    1   YES    YES
+## 9  Natalia Alianovna Romanova    1   YES    YES</code></pre>
+</div>
+<div id="michael-moore" class="section level3">
+<h3>Michael Moore</h3>
+<p><strong>Statement:</strong> In fact, Hawkeye died twice! <br> <strong>Answer:</strong> This is proven true. There are only two rows in the data where Hawkeye (Clinton Francis Barton) died.</p>
+<pre class="r"><code>hawkeye = av.neat %&gt;% dplyr::filter(Name.Alias == &quot;Clinton Francis Barton&quot; &amp; death == &quot;YES&quot;)
+nrow(hawkeye)</code></pre>
+<pre><code>## [1] 2</code></pre>
+</div>
+<div id="kateryna-mykhaylova" class="section level3">
+<h3>Kateryna Mykhaylova</h3>
+<p><strong>Statement:</strong> and on 57 occasions the individual made a comeback.<br> <strong>Answer:</strong> This statement was wrong. As the data shows below, there were only 55 occasions in which the individuals made a comeback.</p>
+<pre class="r"><code>back = av.neat %&gt;% filter(return == &quot;YES&quot;) %&gt;% summarise(n = n())
+head(back)</code></pre>
+<pre><code>##    n
+## 1 55</code></pre>
+</div>
 </div>
 
 
