@@ -1,0 +1,18 @@
+---
+title: "Homework 10"
+author: "Polina Semenova"
+date: "4/13/2022"
+output: html_document
+---
+
+Group Memebers:
+Git Repo: (link) []
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+acc <- read.csv("https://raw.githubusercontent.com/DS202-at-ISU/labs/master/data/fars2016/accident.csv", stringsAsFactors = FALSE)
+names(acc)
+```
+
