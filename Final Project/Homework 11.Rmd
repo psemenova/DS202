@@ -1,0 +1,27 @@
+---
+author: "Polina Semenova, Michael Moore"
+date: "5/01/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Team Member Names:
+Polina Semenova, Michael Moore
+
+#### Overview of Data: 
+Source: [Global Economic Monitor](https://www.kaggle.com/datasets/theworldbank/global-economic-monitor)
+
+There are multiple tables of data within this set. We are interested in:
+  -CPI Price, % y-o-y, seas. adj..xlsx
+  -Foreign Reserves, Months Import Cover, Goods.xlsx
+  -GDP at market prices, current US$, millions, seas. adj..xlsx
+  -Total Reserves.xlsx
+  
+We will be combining the data into one table which we will use. The data from these tables include information about inflation(CPI), foreign reserves held by a country, GDP of a country, and Total reserves held by the country. We can use this information to visualize how these numbers change over the months or quarters. On top of this: based on macroeconomics we know that all these points of data are highly correlated to each other and even affect each other. Our goal is to visualize this implication and causation pattern. Or-if nothing else-to show that the information is very loosely coordinated. 
+
+
+#### Cleaning the Data: 
+The data comes from the World Bank so it is already clean. The only "cleaning" we would have to do is finding a way to combine the tables. This will be a slight issue as some of the tables go by quarters while others go by months. This will not take long to fix as we have two easy options to go with. We can either split the quarters into 3 months or we can combine 3 months into 1 quarter. Each choice has it's own pros and cons on the economic data which we will consider in the Final Project. Right now we are leaning towards spliting the GDP data into 3 equal months. So for instance if 2000Q1 was 3% growth we will say January, February, and March has 1% growth. Note: this isn't a perfect calculation (as stated earlier it carries a con), but it looks like the viable alternative as this causes the least disruption to the data. 
