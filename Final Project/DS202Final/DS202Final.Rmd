@@ -1,0 +1,258 @@
+---
+title: "Final Project"
+author: "Michael Moore, Polina Semenova"
+date: "4/20/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#https://www.kaggle.com/datasets/theworldbank/global-economic-monitor
+```
+
+DATA IMPORTATION AND CLEANING
+```{r}
+library(classdata)
+library(tidyverse)
+library(ggplot2)
+library(plyr)
+library(matrixStats)
+library(plotly)
+
+#Columns used from the data tables.
+Columns = c('X', 'Canada', 'Saudi.Arabia', 'United.States', 'India', 'Russian.Federation', 'South.Africa', 'Turkey', 'Brazil', 'Mexico', 'France', 'Germany', 'Italy', 'United.Kingdom', 'China', 'Sweden', 'Japan', 'Korea..Rep.', 'Switzerland', 'Spain', 'Italy', 'Belgium')
+
+#Countries in the G20 + some to get the total to 20. Some of the G20 countries had no data.
+Countries = c('Canada', 'Saudi.Arabia', 'United.States', 'India', 'Russian.Federation', 'South.Africa', 'Turkey', 'Brazil', 'Mexico', 'France', 'Germany', 'Italy', 'United.Kingdom', 'China', 'Sweden', 'Japan', 'Korea..Rep.', 'Switzerland', 'Spain', 'Italy', 'Belgium')
+
+CPI <- read.csv("CPI.csv") #Used in 2, 3
+CPIG20 <- CPI %>% select(one_of(Columns))
+CPIG20 <- CPIG20[-1, ] #remove null first row
+CPIG20 <- CPIG20[-1, ] #remove 1990
+CPIG20 <- head(CPIG20, - 1) #remove last row (empty on most tables)
+rownames(CPIG20) <- NULL #Reset row values
+
+FReserves <- read.csv("ForeignReserves.csv") #Used in 6
+FReservesG20 <- FReserves %>% select(one_of(Columns))
+FReservesG20 <- FReservesG20[-1, ] #remove null first row
+FReservesG20 <- head(FReservesG20, - 1) #remove last row 
+rownames(FReservesG20) <- NULL #Reset row values
+
+GDP <- read.csv("GDP.csv") #Used in 1
+GDPG20 <- GDP %>% select(one_of(Columns))
+GDPG20 <- GDPG20[-1, ] #remove null first row
+GDPG20 <- GDPG20[-1, ] #remove 1990
+GDPG20 <- head(GDPG20, - 1) #remove last row (empty on most tables)
+rownames(GDPG20) <- NULL #Reset row values
+
+StockMarket <- read.csv("StockMarket.csv") #Used in 4
+StockMarketG20 <- StockMarket %>% select(one_of(Columns))
+StockMarketG20 <- StockMarketG20[-1, ] #remove null first row
+StockMarketG20 <- StockMarketG20[-1, ] #remove 1990
+StockMarketG20 <- head(StockMarketG20, - 1) #remove last row (empty on most tables)
+rownames(StockMarketG20) <- NULL #Reset row values
+
+TotalReserves <- read.csv("TotalReserves.csv") #Used in 6
+TotalReservesG20 <- TotalReserves %>% select(one_of(Columns))
+TotalReservesG20 <- TotalReservesG20[-1, ] #remove null first row
+TotalReservesG20 <- TotalReservesG20[-1, ] #remove 1990
+TotalReservesG20 <- head(TotalReservesG20, - 1) #remove last row (empty on most tables)
+rownames(TotalReservesG20) <- NULL #Reset row values
+
+UnemploymentRate <- read.csv("UnemploymentRate.csv") #Used in 5
+UnemploymentRateG20 <- UnemploymentRate %>% select(one_of(Columns))
+UnemploymentRateG20 <- UnemploymentRateG20[-1, ] #remove null first row
+UnemploymentRateG20 <- UnemploymentRateG20[-1, ] #remove 1990
+UnemploymentRateG20 <- head(UnemploymentRateG20, - 1) #remove last row (empty on most tables)
+rownames(UnemploymentRateG20) <- NULL #Reset row values
+```
+
+1. Line Plot: Which 5 countries have the highest GDP in 2018? How are the plots related over time?
+
+Expectations:
+  We expect mostly western countries to have the highest GDP. This is because western countries prioritize freedom and capitalism. We expect this support to show up in the data, and we expect the plots to be mostly related.
+
+Post Code: 
+  The 5 counties with the highest GDP in 2018 are: The United States, China, Japan, Germany, and UK in that order. We can see that the plots between the western countries are highly coordinated. This makes sense as these countries have both military and trade alliances. China is a notable outlier in this data. This country shows an exceptional growth rate starting in about 2005. China is an outlier in another way too, but this time joined by Japan. The US, Germany and the UK all suffered badly from 2008 and you can see extreme GDP loss and growth loss. Both Germany and the UK have yet to meaningfully break above it's 2008 max. Overall our expectations were met.
+
+``` {r}
+summary(GDPG20)
+#Countries with the highest GDP in 2018 are United States, China, Japan, Germany, UK 
+
+#Plot
+plot <- data.frame(data = GDPG20,
+                 x = GDPG20$X,
+                 y = c(GDPG20$United.States,
+                       GDPG20$China,
+                       GDPG20$Japan,
+                       GDPG20$Germany,
+                       GDPG20$United.Kingdom),
+                 group = rep(c("United States", "China", "Japan", "Germany", "United Kingdom"), each = 28))
+  
+ggplot(plot, aes(x, y, col = group)) +
+  geom_line() + 
+  labs(title = "Country GDP per Year", y = "GDP", x = "Year")
+
+```
+
+2. Barplot: Find the cumulative CPI change from 1991 to 2018 for all countries. Then plot in a barchart the cumulative change for each country. How does it look? How does each country compare to the healthy 28 year cumulative inflation rate (~56%)?
+
+Expectations:
+  As with the last qeustion we expect mostly western countries to have healthy data. We think there may be some blow outs with inflation, but we expect ~200% to be the maximum.
+
+Post Code: 
+  From the chart we can see there are three countries which have an extreme amount of total cumulative inflation. Brazil, Russia, and Turkey all have over 1000% of cumulative total inflation. This is extreme and is deleterious to the economy of these nations. However, we can also see the flip side to that unhealthy coin when we view Japan. After 28 years Japan only has a cumulative inflation value of 10.7. This is low and unhealthy. This means on average Japan only had .38% inflation per year. Mexico, South Africa, China, India, Korea, Spain, Sweden, France, and Switzerland all had somewhat healthy rates. While the rest of the nations had healthy cumulative inflation rates. Our expections were somewhat met. We had not anticipated over 1000% inflation for some countries. On top of this most western countries were healthy.
+
+``` {r}
+test = which(unlist(lapply(CPIG20, is.numeric)))
+CPIG20[(nrow(CPIG20) + 1), test] <- colSums(CPIG20[, test], na.rm=TRUE) 
+#add a row that is cumulative inflation
+
+#Create a table of just Country and Total Inflation
+TotalCPI = CPIG20 %>%
+  rowid_to_column() %>%
+  filter(rowid == 29) %>%
+  gather(col, val, Canada:Belgium) %>%
+  select(-rowid, -X)
+names(TotalCPI) <- c("Country", "Cum.Infaltion")
+
+#Plot
+MaxInflationPerCountryFigure <- ggplot(TotalCPI, aes(reorder(Country, -Cum.Infaltion), Cum.Infaltion)) +
+  scale_y_continuous(trans='log10') +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "Cumulative Inflation (1991 - 2018) per Country", y = "Cumulative Inflation", x = "Country")
+
+MaxInflationPerCountryFigure <- ggplotly(MaxInflationPerCountryFigure)
+MaxInflationPerCountryFigure
+
+```
+
+3. Histogram: For each year in the CPI data find which county had the highest change. Then plot each year, country, and max value in a histogram. How does the data look?
+
+Expectations:
+  Based on the last question I think it is safe to assume Brazil, Russia, and Turkey will be the leaders for most years. 
+
+Post Code: 
+  We can see that in the first 3 years of the data there was a lot of inflation for Brazil and Russia. These values are so high they would almost be considered an outlier here. Instead, we can look at the year and history to see these countries had lots of internal issues. Especially in Russia as the USSR would have dissolved in 1991. From this we can conclude that stability of a country is necessary to have stable inflation. Our expectation were met everywhere expect 1 spot. We did not expect India to show up as a yearly inflation leader. 
+  
+``` {r}
+test = CPIG20 %>% replace(is.na(.), 0) #make all na values 0 in the table
+YearlyMaxData <- data.frame(matrix(ncol = 3, nrow = 0))
+#create new empty table
+
+#for each year (1991 - 2018) find the country with the highest inflation. Then append that data to YearlyMaxData
+for (x in 1:28) {
+  #Find data
+  InterYearMax = test %>%
+  rowid_to_column() %>%
+  filter(rowid == x) %>%
+  gather(col, val, Canada:Belgium) %>%
+  filter(val == max(val)) %>%
+  select(-rowid)
+  
+  #Append data
+  YearlyMaxData = rbind(YearlyMaxData, InterYearMax)
+}
+
+#Plot
+MaxInflationPerYearFigure <- ggplot(data=YearlyMaxData, aes(x=X, y=val, fill=col)) +
+  scale_y_continuous(trans='log10') +
+  geom_bar(stat="identity") + 
+  labs(title = "Highest Country Inflation (1991 - 2018) per Year", y = "Inflation", x = "Year")
+
+MaxInflationPerYearFigure <- ggplotly(MaxInflationPerYearFigure)
+MaxInflationPerYearFigure
+
+```
+
+4. Time Series: Find the three countries that had the smallest stock market cap in 1991 and the three countries with the biggest stock market cap in 2018. Ignore na values. Then plot the countries on a Time Series Plot. Does any part of the chart surprise you?
+
+Expectations:
+  We expect mostly western countries to have the highest stock market cap. And we expect to be able to see the dot com bubble and the 2008 housing bubble.
+
+Post Code: 
+  There are 2 notables facts about the data. The first is that Japan's stock market cap starts out so high compared to the rest. It starts about 5 times bigger than any other country. And on top of this Japan does not keep the lead. By 1998 the US and Japan are about equal. By 2001 the United States was ahead. The other interesting part is that you can clearly see the 2008 financial crisis happen. Each country screamed higher on the years leading up and the years after it went down. Other than that the information is not surprising. Our expectations were fully met here.
+
+``` {r}
+summary(StockMarketG20)
+#3 Countries with the smallest cap at the start are: India, Mexico, Spain
+#3 Countries with the largest cap at the end are: US, Germany, Japan
+
+#Plot
+plot <- data.frame(data = StockMarketG20,
+                 x = StockMarketG20$X,
+                 y = c(StockMarketG20$India,
+                       StockMarketG20$Mexico,
+                       StockMarketG20$Spain,
+                       StockMarketG20$United.States,
+                       StockMarketG20$Germany,
+                       StockMarketG20$Japan),
+                 group = rep(c("India", "Mexico", "Spain", "United States", "Germany", "Japan"), each = 28))
+  
+ggplot(plot, aes(x, y, col = group)) +
+  geom_line() + 
+  labs(title = "Country Stock Market Cap per Year", y = "Stock Market Cap", x = "Year")
+
+```
+
+5. Box Plot: Make a box plot for each nations unemployment rate. Note 3 things about the data.
+
+Expectations:
+  We do not know what to expect with this data. Our only guess is that for some the rate may stay high.
+
+Post Code: 
+  First we can see that South Africa has a really high unemployment rate and it seems to be consistently high. The variation for the data from south aftica is extremely low. On the other hand we can see countries with extremely high variation. Spain has a huge range in it's data. The range from Q1 to Q3 of Spain is bigger than the total range of any other country. Finally we can see that a "healthy" range of unemployment seems to be around ~6%. We can come to this conclusion by looking at countries that are healthy and wealthy from the other questions. These countries include: Germany, UK, US. Going in we had almost no expectations and the one we slightly had did manifest with South Africa. Spain having a wide spread is notable.
+
+``` {r}
+#Plot
+UnemploymentRateG20 %>% select(Countries) %>%
+  pivot_longer(., cols = Countries, names_to = "Var", values_to = "Val") %>%
+  ggplot(aes(x = Var, y = Val)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  geom_boxplot() + 
+  labs(title = "Boxplot of unemployment % per country", y = "Unemployment %", x = "Country")
+```
+
+6. Scatter Plot: Investigate the relationship between Total Reserves and Foreign reserves of Countries.
+
+Expectations:
+  We expect a straight line from origin to the top right. There are o other expectations, we believe this one will be cut and dry.
+
+Post Code: 
+  This is the most interesting plot of all the plots. We expected this to be a linear trend line and there to be no variability. However, what we got was happily surprising. We can see that countries generally take three approaches to reserves. Either the country holds a lot Total Reserves and not a lot of Foreign Reserves or vice verse. The Final approach is to hold neither (bottom left corner). Notable points of data: UK blows out the competition in Foreign Reserves and China blows out the competition in Total Reserves. This makes sense as the UK would want to hold a lot of USD and China would hold a lot of yuan as they have a closed economic system and trade a lot with the US. Our expectations were blown away. This plot is fun to observe.
+
+```{r}
+ZerodTotal = TotalReservesG20 %>% replace(is.na(.), 0) #Set all na values to 0
+ZerodForeign = FReservesG20 %>% replace(is.na(.), 0) #Set all na values to 0
+
+YearlyReserveData <- data.frame(matrix(ncol = 4, nrow = 0)) #Create a new table with 4 rows that is empty.
+
+#for each year (1991 - 2018) get data from each country for Total Reserves in a place holder table. Then find add a column from foreign reserves data to place holder table. Then append the final place holder table data to YearlyReserveData.
+for (x in 1:28) {
+  #Get data from each country for Total Reserves
+  InterYearTotal = ZerodTotal %>%
+  rowid_to_column() %>%
+  filter(rowid == x) %>%
+  gather(col, val, Canada:Belgium) %>%
+  select(-rowid)
+  
+  names(InterYearTotal) <- c("Year", "Country", "TotalReserves") #Rename
+  
+  #Get data from each country for Foreign Reserves
+  InterYearForiegn = ZerodForeign %>%
+  rowid_to_column() %>%
+  filter(rowid == x) %>%
+  gather(col, val, Canada:Belgium) %>%
+  select(-rowid, -X, -col)
+  
+  InterYearTotal$ForiegnReserves = InterYearForiegn$val #Add column from Foreign reserves to total reserves data
+  
+  YearlyReserveData = rbind(YearlyReserveData, InterYearTotal) #Append final place holder table data to YearlyReserveData
+}
+
+#plot
+YearlyReserveData %>% ggplot(aes(x = TotalReserves, y = ForiegnReserves, color = Country)) +
+  geom_point() + 
+  labs(title = "Scatter plot of Total vs Foreign Reserves per Country", y = "ForiegnReserves", x = "TotalReserves")
+```
